@@ -1,4 +1,5 @@
 fastapi
 uvicorn
 requests
-pydantic
+pydantic<2
+psycopg2-binary
