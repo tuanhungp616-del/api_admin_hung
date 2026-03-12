@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HỆ THỐNG TOOL VIP</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            background-color: #0d0d0d;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #1a1a1a;
+            border: 2px solid #00ff00;
+            border-radius: 10px;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 0 15px #00ff00;
+        }
+        .logo {
+            width: 120px;
+            border-radius: 10%;
+            border: 2px solid #00ff00;
+            margin-bottom: 15px;
+        }
+        h2 { margin-top: 0; text-transform: uppercase; text-shadow: 0 0 5px #00ff00; }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #000;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #00ff00;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #fff;
+            box-shadow: 0 0 10px #fff;
+        }
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px dashed #00ff00;
+            background-color: #000;
+            border-radius: 5px;
+            min-height: 90px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .result-text { font-size: 26px; font-weight: bold; color: #ff0000; text-shadow: 0 0 5px red; margin-top: 5px; }
+        .rate-text { font-size: 16px; color: #ffeb3b; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <img src="https://i.postimg.cc/hGbrcTpT/1773030348856.png" alt="Bot Logo" class="logo">
+        <h2>HACK CẦU TÀI XỈU</h2>
+
+        <input type="text" id="username" placeholder="Nhập tài khoản VIP">
+        
+        <select id="game_tool">
+            <option value="lc79">Cổng Game LC79</option>
+            <option value="betvip">Cổng Game BetVIP</option>
+        </select>
+
+        <button onclick="scanGame()">BẮT ĐẦU QUÉT AI</button>
+
+        <div class="result-box">
+            <div id="status_msg">Chờ lệnh hệ thống...</div>
+            <div id="result_text" class="result-text"></div>
+            <div id="rate_text" class="rate-text"></div>
+        </div>
+    </div>
+
+    <script>
+        // BÍ QUYẾT Ở ĐÂY: Dây điện kết nối Mặt tiền với Lõi Python
+        // Nếu Boss chạy Python trên điện thoại Termux thì để nguyên "localhost". 
+        // Nếu Boss mua VPS, thì thay chữ localhost bằng địa chỉ IP của VPS nhé!
+        const API_URL = "http://localhost:8000/api/scan";
+
+        async function scanGame() {
+            const username = document.getElementById("username").value;
+            const tool = document.getElementById("game_tool").value;
+            const statusMsg = document.getElementById("status_msg");
+            const resultText = document.getElementById("result_text");
+            const rateText = document.getElementById("rate_text");
+
+            if (!username) {
+                statusMsg.innerText = "⚠️ Lỗi: Chưa nhập tài khoản VIP!";
+                statusMsg.style.color = "red";
+                resultText.innerText = "";
+                rateText.innerText = "";
+                return;
+            }
+
+            statusMsg.innerText = "⏳ Đang kết nối máy chủ AI...";
+            statusMsg.style.color = "yellow";
+            resultText.innerText = "";
+            rateText.innerText = "";
+
+            try {
+                // Phóng luồng điện (Fetch) sang cổng 8000 của Python
+                const response = await fetch(`${API_URL}?username=${username}&tool=${tool}`);
+                const data = await response.json();
+
+                if (data.status === "success") {
+                    statusMsg.innerText = "✅ Giải mã thành công!";
+                    statusMsg.style.color = "#00ff00";
+                    
+                    // In kết quả đỏ chót ra màn hình
+                    resultText.innerText = `${data.data.du_doan}`;
+                    rateText.innerText = `Tỷ lệ thắng: ${data.data.ti_le}%`;
+                } else {
+                    statusMsg.innerText = "❌ Lỗi: " + data.msg;
+                    statusMsg.style.color = "red";
+                }
+            } catch (error) {
+                statusMsg.innerText = "☠️ Mất kết nối với Lõi AI Python!";
+                statusMsg.style.color = "red";
+            }
+        }
+    </script>
+
+</body>
+</html>
